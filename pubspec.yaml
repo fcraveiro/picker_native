@@ -1,0 +1,36 @@
+name: picker_native
+
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:                # Importante  
+    sdk: flutter
+
+  google_fonts: ^2.2.0                  # Maquiagem
+  font_awesome_flutter: ^9.2.0          # Maquiagem
+  intl: ^0.17.0                         # Maquiagem
+
+  image_picker: ^0.8.4+6                # Importante  
+  flutter_native_image: ^0.0.6+1        # Importante Ver Substituto
+  get: ^4.6.1                           # Rotas
+  supabase: ^0.2.10                     # Servidor
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+flutter:
+
+  uses-material-design: true
+
