@@ -16,8 +16,6 @@ class Picker extends StatefulWidget {
 }
 
 File pathFoto = '' as File;
-bool temFoto = false;
-bool foiSalva = false;
 var idFoto = '';
 var pathImage = '';
 var pathServerNormal = '';
@@ -43,6 +41,21 @@ class _PickerState extends State<Picker> {
         title: const Text('Capturar Imagem'),
         centerTitle: true,
         backgroundColor: const Color(0xFF48426D),
+        actions: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => {
+                  _showSelectImageDialog(),
+                },
+                child: const Icon(Icons.add_a_photo),
+              ),
+              const SizedBox(
+                width: 17,
+              ),
+            ],
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -100,88 +113,18 @@ class _PickerState extends State<Picker> {
                         ),
                         onPressed: () {
                           gravacao();
-                          setState(() {
-                            temFoto = false;
-                          });
                           _showToast(context);
                         },
-                        child: const Text('Salvar'),
+                        child: const Text(
+                          'Salvar',
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ),
                     ),
             ],
           ),
         ],
       ),
-
-      /*
-      Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width - 10,
-          height: MediaQuery.of(context).size.height - 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 280,
-                height: 365,
-                padding: const EdgeInsets.all(0),
-                margin: const EdgeInsets.only(top: 45),
-                child: temFoto
-                    ? Image.file(File(pathFoto.path))
-                    : const Text('nova'),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  temFoto
-                      ? SizedBox(
-                          width: 130,
-                          height: 40,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              gravacao();
-                              setState(() {
-                                temFoto = false;
-                              });
-                              _showToast(context);
-                            },
-                            child: const Text('Salvar'),
-                          ),
-                        )
-                      : const SizedBox(
-                          width: 130,
-                          height: 40,
-                        ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 130,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        foiSalva = false;
-                        _showSelectImageDialog();
-                      },
-                      child: const Text('Escolher Imagem'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      */
     );
   }
 
@@ -191,7 +134,6 @@ class _PickerState extends State<Picker> {
     if (image != null) {
       pathFoto = File(image.path);
       setState(() {
-        temFoto = true;
         _image = image;
       });
     }
@@ -199,7 +141,7 @@ class _PickerState extends State<Picker> {
 
   gravacao() async {
     var dnow = DateTime.now();
-    var formatter = DateFormat('yyyy-MM-dd-hh-mm-ss');
+    var formatter = DateFormat('yyyyMMddhhmmss');
     var dataHoje = formatter.format(dnow);
     idFoto = dataHoje + '.jpg';
     await gravaFoto(idFoto, pathFoto);
@@ -208,7 +150,6 @@ class _PickerState extends State<Picker> {
     idFoto = dataHoje + '-thumb.jpg';
     await gravaFoto(idFoto, pathFoto);
     pathServerThumb = pathImage;
-    foiSalva = true;
     log(pathServerThumb);
     log(pathServerNormal);
     setState(() {
@@ -218,10 +159,10 @@ class _PickerState extends State<Picker> {
 
   gravaFoto(String nomeDaFoto, File pathFoto) async {
     await cliente.storage
-        .from('pronto')
+        .from('fotos')
         .upload(nomeDaFoto, pathFoto)
         .then((value) {
-      var response = cliente.storage.from('pronto').getPublicUrl(nomeDaFoto);
+      var response = cliente.storage.from('fotos').getPublicUrl(nomeDaFoto);
       pathImage = response.data.toString();
     });
   }
@@ -241,21 +182,35 @@ class _PickerState extends State<Picker> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: const Text('Add Photo'),
+          title: const Text(
+            'Add Photo',
+            style: TextStyle(color: Colors.black),
+          ),
           actions: <Widget>[
             CupertinoActionSheetAction(
-              child: const Text('Take Photo'),
+              child: const Text(
+                'Take Photo',
+                style: TextStyle(
+                  color: Color(0xFF48426D),
+                ),
+              ),
               onPressed: () => _handleImage(source: ImageSource.camera),
             ),
             CupertinoActionSheetAction(
-              child: const Text('Choose From Gallery'),
+              child: const Text(
+                'Choose From Gallery',
+                style: TextStyle(
+                  color: Color(0xFF48426D),
+                ),
+              ),
               onPressed: () => _handleImage(source: ImageSource.gallery),
             )
           ],
           cancelButton: CupertinoActionSheetAction(
             child: const Text(
               'Cancel',
-              style: TextStyle(color: Colors.redAccent),
+              style: TextStyle(
+                  letterSpacing: .2, color: Color.fromARGB(255, 223, 16, 16)),
             ),
             onPressed: () => Navigator.pop(context),
           ),
